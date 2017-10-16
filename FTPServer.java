@@ -41,7 +41,6 @@ class FTPServer{
             
         fromClient = inFromClient.readLine();
         StringTokenizer tokens = new StringTokenizer(fromClient);
-        System.out.println(fromClient);
         frstln = tokens.nextToken();
         port = Integer.parseInt(frstln);
         clientCommand = tokens.nextToken();
