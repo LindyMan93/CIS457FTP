@@ -17,7 +17,6 @@ class FTPClient {
 	    String statusCode;
 	    boolean clientgo = true;
         int port, port1;
-        Socket ControlSocket;
 	    
 	
 	    BufferedReader inFromUser = 
@@ -32,13 +31,9 @@ class FTPClient {
 	   port1 = Integer.parseInt(tokens.nextToken());
        port = port1+2;
        System.out.println("Connecting to " + serverName + " through port "+ port1);
-       try{
-       	Socket ControlSocket = new Socket(serverName, port1);
-       	System.out.println("Connected");
-        System.out.println(ControlSocket);
-       } catch (Exception ConnectException) {
-       	System.out.println("Incorrect server name or port");
-       }	
+	   Socket ControlSocket = new Socket(serverName, port1);
+       System.out.println("Connected");
+     System.out.println("\nWhat would you like to do: \n list: to list files \n retr: file.txt || stor: file.txt  || close");
         
 	while(isOpen && clientgo)
         {      
@@ -83,29 +78,59 @@ class FTPClient {
         ServerSocket welcomeData = new ServerSocket(port);
         outToServer.writeBytes (port + " " + sentence + " " + '\n');
 
+
         Socket dataSocket = welcomeData.accept(); 
         DataInputStream inData = new DataInputStream(new BufferedInputStream(dataSocket.getInputStream()));
+        FileOutputStream out = null;
+        boolean fileExists = true;
+        try{
+        out = new FileOutputStream(fileName);
+        }
+        catch(FileNotFoundException e){
+        System.out.println("Client error: File Not Recieved.");
+        fileExists = false;
+        }
+        if(fileExists){
+        recieveFile(inData, out);
+
         String modifiedSentence = inData.readUTF();
         System.out.println(modifiedSentence);
-
+    }
+        out.close();
         welcomeData.close();
         dataSocket.close();
         System.out.println("\nWhat would you like to do next: \n retr: file.txt || stor: file.txt  || close");
-        }
+        
+    }
         else if(sentence.startsWith("stor:")){
         ServerSocket welcomeData = new ServerSocket(port);
         outToServer.writeBytes (port + " " + sentence + " " + '\n');
-        FileOutputStream out = new FileOutputStream(fileName);
-
+        boolean fileExists = true;
+    
         Socket dataSocket = welcomeData.accept(); 
         DataInputStream inData = new DataInputStream(new BufferedInputStream(dataSocket.getInputStream()));
+        DataOutputStream outData = new DataOutputStream(dataSocket.getOutputStream()); 
 
-        String modifiedSentence = inData.readUTF();
-        System.out.println(modifiedSentence);
+        FileInputStream in = null;
+        try{
+        in = new FileInputStream(fileName);
+        System.out.println("Client report: File found.");
+        }
+        catch(FileNotFoundException e){
+        System.out.println("Client error: File Not found.");
+        fileExists = false;
+        }
+        if(fileExists){
+        sendFile(in, outData);
 
+        // String modifiedSentence = inData.readUTF();
+        // System.out.println(modifiedSentence);
+        }
+        in.close();
         welcomeData.close();
         dataSocket.close();
         System.out.println("\nWhat would you like to do next: \n retr: file.txt || stor: file.txt  || close");
+        
         }
         else if(sentence.startsWith("close")){
             System.exit(1);
@@ -113,5 +138,25 @@ class FTPClient {
     }
 }
 }
+
+    private static void sendFile(FileInputStream fis, DataOutputStream os) throws Exception {
+        byte[] buffer = new byte[1024];
+        int bytes = 0;
+        
+        while ((bytes = fis.read(buffer)) != -1) {
+            System.out.println("Sending File...");
+            os.write(buffer, 0, bytes);
+        }
+    }
+
+    private static void recieveFile(DataInputStream dis, FileOutputStream os) throws Exception{
+        byte[] buffer = new byte [1024];
+        int bytes;
+  
+        while ((bytes = dis.read(buffer)) != -1) {
+            System.out.println("Recieving File...");
+            os.write(buffer, 0, bytes);
+    }
+  }
 
 }

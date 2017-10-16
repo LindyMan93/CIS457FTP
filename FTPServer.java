@@ -2,6 +2,8 @@ import java.io.*;
 import java.net.*;
 import java.io.File;
 import java.util.*;
+import java.io.OutputStream;
+
 
 
 class FTPServer{	
@@ -19,16 +21,16 @@ class FTPServer{
 
     public static void Thread(Socket connectionSocket){
     File[] listOfFiles=null;
+    String nextFile = null;
     try{
      while(true)
       {    
 
         String fromClient;
-        String clientCommand, nextFile;
+        String clientCommand;
         byte[] data;
         String frstln;
         int port;        
-        System.out.println("start");
    
         DataOutputStream  outToClient = 
         new DataOutputStream(connectionSocket.getOutputStream());
@@ -37,7 +39,6 @@ class FTPServer{
         InputStreamReader(connectionSocket.getInputStream()));
             
         fromClient = inFromClient.readLine();
-        System.out.println(fromClient);
         StringTokenizer tokens = new StringTokenizer(fromClient);
             
         frstln = tokens.nextToken();
@@ -45,10 +46,8 @@ class FTPServer{
         clientCommand = tokens.nextToken();
         try{
         nextFile = tokens.nextToken();
-        System.out.println(nextFile);
-      }catch(Exception e){}
-                  
-        System.out.println("frstln " + frstln);
+
+      }catch(Exception e){}        
         if(clientCommand.equals("list:"))
         {                   
           Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
@@ -71,11 +70,21 @@ class FTPServer{
       {
           Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
           DataOutputStream dataOutToClient = new DataOutputStream(dataSocket.getOutputStream());
+          boolean fileExists = true;
+          FileInputStream in = null;
 
-          System.out.println(dataOutToClient);
-
-          dataOutToClient.writeUTF("-retr logic-");
-
+          try{
+          in = new FileInputStream(nextFile);
+          dataOutToClient.writeUTF("Server report: File found.");
+          }
+          catch(FileNotFoundException e){
+          dataOutToClient.writeUTF("Server error: File Not found.");
+          fileExists = false;
+          }
+          if(fileExists){
+          sendFile(in, dataOutToClient);
+          }
+          in.close();
           dataOutToClient.close();
           dataSocket.close();
           System.out.println("Data Socket closed");
@@ -84,19 +93,51 @@ class FTPServer{
 
           Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
           DataOutputStream dataOutToClient = new DataOutputStream(dataSocket.getOutputStream());
+          DataInputStream inData = new DataInputStream(dataSocket.getInputStream());
+          FileOutputStream out =null;
+          boolean fileExists = true;
+          try{
+          out = new FileOutputStream(nextFile);
+          dataOutToClient.writeUTF("Server Report: File Recieved.");
+        }
+        catch(FileNotFoundException e){
+          fileExists = false;
+          dataOutToClient.writeUTF("Server error: File Not Recieved.");
 
-          System.out.println(dataOutToClient);
-
-         dataOutToClient.writeUTF("-stor logic-");
-
+        }
+        if(fileExists){
+          recieveFile(inData, out);
+          }
+          out.close();
           dataOutToClient.close();
           dataSocket.close();
           System.out.println("Data Socket closed");
-        }
+        
+      }
      }
    }catch(Exception e){
     System.out.println(e);
    }
 
+  }
+
+  private static void sendFile(FileInputStream fis, DataOutputStream os) throws Exception {
+    byte[] buffer = new byte[1024];
+    int bytes = 0;
+    
+    while ((bytes = fis.read(buffer)) != -1) {
+      System.out.println("Sending File...");
+      os.write(buffer, 0, bytes);
+    }
+  }
+
+  private static void recieveFile(DataInputStream dis, FileOutputStream os) throws Exception{
+    byte[] buffer = new byte [1024];
+    int bytes;
+  
+    while ((bytes = dis.read(buffer)) != -1) {
+      System.out.println("Recieving File...");
+      os.write(buffer, 0, bytes);
+    }
   }
 }    
