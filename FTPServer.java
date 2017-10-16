@@ -56,7 +56,8 @@ class FTPServer{
           File folder = new File(System.getProperty("user.dir"));
           listOfFiles = folder.listFiles();
             for (int i = 0; i < listOfFiles.length; i++) {
-              if (listOfFiles[i].isFile() && listOfFiles[i].endsWith(".txt")) {
+              String temp = listOfFiles[i]+"";
+              if (listOfFiles[i].isFile() && temp.endsWith(".txt")) {
                 dataOutToClient.writeUTF("file " + listOfFiles[i].getName());
               }
             }
