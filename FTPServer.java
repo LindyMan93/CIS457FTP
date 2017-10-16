@@ -47,18 +47,16 @@ class FTPServer{
         clientCommand = tokens.nextToken();
         try{
         nextFile = tokens.nextToken();
-        System.out.println(nextFile);
-
       }catch(Exception e){}        
         if(clientCommand.equals("list:"))
         {                   
           Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
           DataOutputStream  dataOutToClient = 
           new DataOutputStream(dataSocket.getOutputStream());
-          //needs work
-          //listOfFiles = folder.listFiles();
+          File folder = new File(System.getProperty("user.dir"));
+          listOfFiles = folder.listFiles();
             for (int i = 0; i < listOfFiles.length; i++) {
-              if (listOfFiles[i].isFile()) {
+              if (listOfFiles[i].isFile() && listOfFiles[i].endsWith(".txt")) {
                 dataOutToClient.writeUTF("file " + listOfFiles[i].getName());
               }
             }

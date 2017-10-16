@@ -11,6 +11,7 @@ class FTPClient {
     public static void main(String argv[]) throws Exception 
     { 
         String sentence; 
+        String fileName = null;
         boolean isOpen = true;
         int number=1;
         boolean notEnd = true;
@@ -46,7 +47,10 @@ class FTPClient {
     	  String command = inFromUser.readLine();
           StringTokenizer token = new StringTokenizer(command);
           sentence = token.nextToken();
-          String fileName = token.nextToken();
+          try{
+          fileName = token.nextToken();
+        }
+        catch(Exception e){}
         if(sentence.equals("list:"))
         {
 	    ServerSocket welcomeData = new ServerSocket(port);
