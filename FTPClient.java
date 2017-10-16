@@ -15,36 +15,36 @@ class FTPClient {
         boolean isOpen = true;
         int number=1;
         boolean notEnd = true;
-	    String statusCode;
-	    boolean clientgo = true;
+        String statusCode;
+        boolean clientgo = true;
         int port, port1;
-	    
-	
-	    BufferedReader inFromUser = 
+        
+    
+        BufferedReader inFromUser = 
         new BufferedReader(new InputStreamReader(System.in)); 
         sentence = inFromUser.readLine();
         StringTokenizer tokens = new StringTokenizer(sentence);
 
 
-	   if(sentence.startsWith("connect")){
-	   String serverName = tokens.nextToken(); // pass the connect command
-	   serverName = tokens.nextToken();
-	   port1 = Integer.parseInt(tokens.nextToken());
+       if(sentence.startsWith("connect")){
+       String serverName = tokens.nextToken(); // pass the connect command
+       serverName = tokens.nextToken();
+       port1 = Integer.parseInt(tokens.nextToken());
        port = port1+2;
        System.out.println("Connecting to " + serverName + " through port "+ port1);
-	   Socket ControlSocket = new Socket(serverName, port1);
+       Socket ControlSocket = new Socket(serverName, port1);
        System.out.println("Connected");
      System.out.println("\nWhat would you like to do: \n list: to list files \n retr: file.txt || stor: file.txt  || close");
         
-	while(isOpen && clientgo)
+    while(isOpen && clientgo)
         {      
 
           DataOutputStream outToServer = new DataOutputStream(ControlSocket.getOutputStream()); 
           
-	  DataInputStream inFromServer = new DataInputStream(new BufferedInputStream(ControlSocket.getInputStream()));
+      DataInputStream inFromServer = new DataInputStream(new BufferedInputStream(ControlSocket.getInputStream()));
           
 
-    	  String command = inFromUser.readLine();
+          String command = inFromUser.readLine();
           StringTokenizer token = new StringTokenizer(command);
           sentence = token.nextToken();
           try{
@@ -53,11 +53,11 @@ class FTPClient {
         catch(Exception e){}
         if(sentence.equals("list:"))
         {
-	    ServerSocket welcomeData = new ServerSocket(port);
-    	    outToServer.writeBytes (port + " " + sentence + " " + '\n');
+        ServerSocket welcomeData = new ServerSocket(port);
+            outToServer.writeBytes (port + " " + sentence + " " + '\n');
 
-	    Socket dataSocket = welcomeData.accept(); 
- 	    DataInputStream inData = new DataInputStream(new BufferedInputStream(dataSocket.getInputStream()));
+        Socket dataSocket = welcomeData.accept(); 
+        DataInputStream inData = new DataInputStream(new BufferedInputStream(dataSocket.getInputStream()));
             while(notEnd) 
             {
                 try{
@@ -69,11 +69,11 @@ class FTPClient {
             }
           // Need work
             }
-	
+    
 
-	 welcomeData.close();
-	 dataSocket.close();
-	 System.out.println("\nWhat would you like to do next: \n retr: file.txt || stor: file.txt  || close");
+     welcomeData.close();
+     dataSocket.close();
+     System.out.println("\nWhat would you like to do next: \n retr: file.txt || stor: file.txt  || close");
 
         }
          else if(sentence.startsWith("retr:"))
@@ -95,9 +95,14 @@ class FTPClient {
         }
         if(fileExists){
         recieveFile(inData, out);
+        
 
-        String modifiedSentence = inData.readUTF();
-        System.out.println(modifiedSentence);
+        try{
+         String modifiedSentence = inData.readUTF();
+         System.out.println(modifiedSentence);
+        } catch (EOFException e) {
+           System.out.println("Client error: File Not found.");
+        } 
     }
         out.close();
         welcomeData.close();

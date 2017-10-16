@@ -1,3 +1,4 @@
+
 import java.io.*; 
 import java.net.*;
 import java.io.File;
@@ -46,7 +47,9 @@ class FTPServer{
         clientCommand = tokens.nextToken();
         try{
         nextFile = tokens.nextToken();
-      }catch(Exception e){}        
+      }catch(Exception e){
+        System.out.println("while catch");
+      }        
         if(clientCommand.equals("list:"))
         {                   
           Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
@@ -79,8 +82,9 @@ class FTPServer{
           in.close();
           }
           catch(FileNotFoundException e){
-          dataOutToClient.writeUTF("Server error: File Not found.");
+           dataOutToClient.writeUTF("Server error: File Not found.");
           }
+
           
           dataOutToClient.close();
           dataSocket.close();
@@ -110,9 +114,14 @@ class FTPServer{
         
       }
      }
-   }catch(Exception e){
+   } catch(IOException a) {
+    System.out.println("invalid input");
+
+   } catch(Exception e) {
+    System.out.println("Big Catch");
     System.out.println(e);
    }
+
 
   }
 
@@ -135,4 +144,4 @@ class FTPServer{
       os.write(buffer, 0, bytes);
     }
   }
-}    
+}
