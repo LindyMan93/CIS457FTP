@@ -47,7 +47,6 @@ class FTPClient {
           StringTokenizer token = new StringTokenizer(command);
           sentence = token.nextToken();
           String fileName = token.nextToken();
-        System.out.println(fileName);
         if(sentence.equals("list:"))
         {
 	    ServerSocket welcomeData = new ServerSocket(port);
@@ -76,7 +75,7 @@ class FTPClient {
          else if(sentence.startsWith("retr:"))
         {
         ServerSocket welcomeData = new ServerSocket(port);
-        outToServer.writeBytes (port + " " + sentence + " " + '\n');
+        outToServer.writeBytes (port + " " + sentence + " " + fileName+'\n');
 
 
         Socket dataSocket = welcomeData.accept(); 
@@ -104,7 +103,7 @@ class FTPClient {
     }
         else if(sentence.startsWith("stor:")){
         ServerSocket welcomeData = new ServerSocket(port);
-        outToServer.writeBytes (port + " " + sentence + " " + '\n');
+        outToServer.writeBytes (port + " " + sentence + " " +fileName+ '\n');
         boolean fileExists = true;
     
         Socket dataSocket = welcomeData.accept(); 

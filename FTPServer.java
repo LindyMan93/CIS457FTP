@@ -15,6 +15,7 @@ class FTPServer{
 
       Socket socket = welcomeSocket.accept();
       Thread(socket);
+      welcomeSocket.close();
     }
 
     }
@@ -40,12 +41,13 @@ class FTPServer{
             
         fromClient = inFromClient.readLine();
         StringTokenizer tokens = new StringTokenizer(fromClient);
-            
+        System.out.println(fromClient);
         frstln = tokens.nextToken();
         port = Integer.parseInt(frstln);
         clientCommand = tokens.nextToken();
         try{
         nextFile = tokens.nextToken();
+        System.out.println(nextFile);
 
       }catch(Exception e){}        
         if(clientCommand.equals("list:"))
@@ -70,45 +72,40 @@ class FTPServer{
       {
           Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
           DataOutputStream dataOutToClient = new DataOutputStream(dataSocket.getOutputStream());
-          boolean fileExists = true;
           FileInputStream in = null;
 
           try{
           in = new FileInputStream(nextFile);
           dataOutToClient.writeUTF("Server report: File found.");
+          sendFile(in, dataOutToClient);
+          in.close();
           }
           catch(FileNotFoundException e){
           dataOutToClient.writeUTF("Server error: File Not found.");
-          fileExists = false;
           }
-          if(fileExists){
-          sendFile(in, dataOutToClient);
-          }
-          in.close();
+          
           dataOutToClient.close();
           dataSocket.close();
           System.out.println("Data Socket closed");
 	     }
        if (clientCommand.equals("stor:")) {
-
           Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
           DataOutputStream dataOutToClient = new DataOutputStream(dataSocket.getOutputStream());
           DataInputStream inData = new DataInputStream(dataSocket.getInputStream());
-          FileOutputStream out =null;
-          boolean fileExists = true;
+          File f = new File(nextFile);
+          FileOutputStream out = null;
           try{
-          out = new FileOutputStream(nextFile);
+          out = new FileOutputStream(f);
+          System.out.println("Made it stor: ");
+          recieveFile(inData, out);
           dataOutToClient.writeUTF("Server Report: File Recieved.");
+          out.close();
         }
         catch(FileNotFoundException e){
-          fileExists = false;
           dataOutToClient.writeUTF("Server error: File Not Recieved.");
 
         }
-        if(fileExists){
-          recieveFile(inData, out);
-          }
-          out.close();
+        
           dataOutToClient.close();
           dataSocket.close();
           System.out.println("Data Socket closed");
