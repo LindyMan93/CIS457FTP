@@ -15,7 +15,6 @@ class FTPClient {
         String fileName = null;
         boolean isOpen = true;
         int number = 1;
-        boolean notEnd = true;
         String statusCode;
         boolean clientgo = true;
         int port, port1;
@@ -54,7 +53,7 @@ class FTPClient {
                 catch(Exception e) { }
 
                 if(sentence.equals("list:")) {
-
+                    boolean notEnd = true;
                     port = port1 + 2;
                     ServerSocket welcomeData = new ServerSocket(port);
                     outToServer.writeBytes (port + " " + sentence + " " + '\n');
@@ -73,7 +72,6 @@ class FTPClient {
                         catch (Exception e) {
                             notEnd = false;
                         }
-                        // Need work
                     }
 
                     welcomeData.close();
@@ -134,6 +132,7 @@ class FTPClient {
 
                     if(fileExists) {
                         sendFile(in, outData);
+                        System.out.println("File Sent.");
                         // String modifiedSentence = inData.readUTF();
                         // System.out.println(modifiedSentence);
                     }
@@ -146,6 +145,10 @@ class FTPClient {
 
                 else if(sentence.startsWith("close")) {
                     System.exit(1);
+                }
+                else{
+                    System.out.println("Invalid command");
+                    System.out.println(options);
                 }
             }
         }

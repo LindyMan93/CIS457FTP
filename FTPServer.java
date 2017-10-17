@@ -144,7 +144,6 @@ class ClientThread extends Thread
                         try
                         {
                             out = new FileOutputStream(f);
-                            System.out.println("Made it stor: ");
                             recieveFile(inData, out);
                             dataOutToClient.writeUTF("Server Report: File Recieved.");
                             out.close();
