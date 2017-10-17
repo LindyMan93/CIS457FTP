@@ -33,7 +33,6 @@ class FTPClient {
             serverName = tokens.nextToken();
             System.out.println(serverName);
             port1 = Integer.parseInt(tokens.nextToken());
-            port = port1+2;
             System.out.println("Connecting to " + serverName + " through port "+ port1);
             Socket ControlSocket = new Socket(serverName, port1);
             System.out.println("Connected");
@@ -43,7 +42,6 @@ class FTPClient {
 
                 DataOutputStream outToServer = new DataOutputStream(ControlSocket.getOutputStream());
                 DataInputStream inFromServer = new DataInputStream(new BufferedInputStream(ControlSocket.getInputStream()));
-                ServerSocket welcomeData = new ServerSocket(port);
 
                 String command = inFromUser.readLine();
                 StringTokenizer token = new StringTokenizer(command);
@@ -57,6 +55,8 @@ class FTPClient {
 
                 if(sentence.equals("list:")) {
 
+                    port = port1 + 2;
+                    ServerSocket welcomeData = new ServerSocket(port);
                     outToServer.writeBytes (port + " " + sentence + " " + '\n');
 
                     Socket dataSocket = welcomeData.accept();
@@ -76,14 +76,15 @@ class FTPClient {
                         // Need work
                     }
 
-                    // welcomeData.close();
+                    welcomeData.close();
                     dataSocket.close();
                     System.out.println(options);
 
                 }
 
                 else if(sentence.startsWith("retr:")) {
-                    // ServerSocket welcomeData = new ServerSocket(port);
+                    port = port1 + 2;
+                    ServerSocket welcomeData = new ServerSocket(port);
                     outToServer.writeBytes (port + " " + sentence + " " + fileName+'\n');
                     Socket dataSocket = welcomeData.accept();
                     DataInputStream inData = new DataInputStream(new BufferedInputStream(dataSocket.getInputStream()));
@@ -104,15 +105,15 @@ class FTPClient {
                         System.out.println("File Recieved");
                     }
                     out.close();
-                    // welcomeData.close();
+                    welcomeData.close();
                     dataSocket.close();
                     System.out.println(options);
 
                 }
 
                 else if(sentence.startsWith("stor:")) {
-
-                    // ServerSocket welcomeData = new ServerSocket(port);
+                    port = port1 + 2;
+                    ServerSocket welcomeData = new ServerSocket(port);
                     outToServer.writeBytes (port + " " + sentence + " " +fileName+ '\n');
                     boolean fileExists = true;
 
@@ -138,7 +139,7 @@ class FTPClient {
                     }
 
                     in.close();
-                    // welcomeData.close();
+                    welcomeData.close();
                     dataSocket.close();
                     System.out.println(options);
                 }
