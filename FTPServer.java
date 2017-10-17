@@ -115,11 +115,6 @@ class ClientThread extends Thread {
         frstln = tokens.nextToken();
         port = Integer.parseInt(frstln);
         clientCommand = tokens.nextToken();
-        try {
-          nextFile = tokens.nextToken();
-        } catch (NullPointerException e) {
-          System.out.println("Error: No File Specified");
-        }
 
         /*
          * Case "list:"
@@ -146,6 +141,12 @@ class ClientThread extends Thread {
           dataOutToClient.close();
           dataSocket.close();
           System.out.println("Data Socket closed");
+        }
+        
+        try {
+          nextFile = tokens.nextToken();
+        } catch (NullPointerException e) {
+          System.out.println("Error: No File Specified");
         }
 
         /*

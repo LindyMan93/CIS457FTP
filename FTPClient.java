@@ -83,13 +83,14 @@ class FTPClient {
                 StringTokenizer token = new StringTokenizer(command);
                 sentence = token.nextToken();
 
-                try {
+             /*   try {
                     fileName = token.nextToken();
 
                 } catch (NoSuchElementException e) {
                     System.out.println("Invalid Argument"); //test
+                    fileName = "";
                     // should restart while loop
-                }
+                }*/
 
                 /*
                  * Case "list:"
@@ -130,6 +131,14 @@ class FTPClient {
                     System.out.println(options);
 
                 }
+                if (!(sentence.equals("list:"))){
+                    try {
+                        fileName = token.nextToken();
+
+                    } catch (NoSuchElementException e) {
+                        System.out.println("Invalid Argument"); //test
+                    } 
+                }
 
                 /*
                  * Case "retr:"
@@ -138,7 +147,7 @@ class FTPClient {
                  * send the server which file it wants to download and
                  * listen to see if the server is sending anything back.
                  */
-                else if (sentence.startsWith("retr:")) {
+                if (sentence.startsWith("retr:")) {
                     port = port1 + 2;
                     ServerSocket welcomeData = new ServerSocket(port);
                     outToServer.writeBytes(port + " " + sentence + " " + fileName + '\n');
