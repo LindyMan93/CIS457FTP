@@ -85,10 +85,10 @@ class FTPClient {
 
                 try {
                     fileName = token.nextToken();
-                }
 
-                catch (Exception e) {
-                    System.out.println("Invalid File");
+                } catch (NoSuchElementException e) {
+                    System.out.println("Invalid Argument"); //test
+                    // should restart while loop
                 }
 
                 /*
@@ -148,9 +148,14 @@ class FTPClient {
                     boolean fileExists = true;
                     try {
                         out = new FileOutputStream(fileName);
+
                     } catch (FileNotFoundException e) {
                         System.out.println("Client error: File Not Recieved.");
                         fileExists = false;
+
+                    } catch (NullPointerException e) {
+                        System.out.println("No File Specified"); //test
+                        //not neccesary if line 90 can restart whle loop
                     }
 
                     if (fileExists) {

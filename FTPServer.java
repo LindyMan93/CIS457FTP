@@ -82,9 +82,8 @@ class ClientThread extends Thread {
       inFromClient = new BufferedReader(new InputStreamReader(clientConn.getInputStream()));
 
     } catch (IOException e) {
-
+      System.out.println("Server line 85"); //test
       e.printStackTrace();
-
     }
   }
   
@@ -119,7 +118,7 @@ class ClientThread extends Thread {
         try {
           nextFile = tokens.nextToken();
         } catch (NullPointerException e) {
-          dataOutToClient.writeUTF("Error: No File Specified"); 
+          System.out.println("Error: No File Specified");
         }
 
         /*
@@ -140,7 +139,7 @@ class ClientThread extends Thread {
             if (listOfFiles[i].isFile() && temp.endsWith(".txt")) {
               dataOutToClient.writeUTF("file " + listOfFiles[i].getName());
             } else if (listOfFiles.length == 0) {
-              dataOutToClient.writeUTF("No Files Found");
+              dataOutToClient.writeUTF("No Files Found"); //test
             }
           }
 
@@ -208,6 +207,9 @@ class ClientThread extends Thread {
 
         }
       }
+    } catch (NullPointerException e) {
+      System.out.println("Connection with " + clientConn + " Ended");
+
     } catch (Exception e) {
       System.out.println(e);
     }
