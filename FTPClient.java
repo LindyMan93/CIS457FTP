@@ -1,3 +1,16 @@
+/*
+*   Authors: Nathan Lindenbaum
+*            Brendan Nahed
+*            Jacob Geers
+*
+*   Date: 10/15/2017
+*   Class: CIS457 Data Communications
+*
+*   Notes: This is the client class of the FTP file server. It will
+*
+*
+*/
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -15,6 +28,7 @@ class FTPClient {
         String fileName = null;
         boolean isOpen = true;
         int number = 1;
+
         String statusCode;
         boolean clientgo = true;
         int port, port1;
@@ -53,6 +67,7 @@ class FTPClient {
                 catch(Exception e) { }
 
                 if(sentence.equals("list:")) {
+
                     boolean notEnd = true;
                     port = port1 + 2;
                     ServerSocket welcomeData = new ServerSocket(port);
@@ -72,8 +87,9 @@ class FTPClient {
                         catch (Exception e) {
                             notEnd = false;
                         }
+                        // Need work
                     }
-
+                    inData.close();
                     welcomeData.close();
                     dataSocket.close();
                     System.out.println(options);
@@ -132,7 +148,6 @@ class FTPClient {
 
                     if(fileExists) {
                         sendFile(in, outData);
-                        System.out.println("File Sent.");
                         // String modifiedSentence = inData.readUTF();
                         // System.out.println(modifiedSentence);
                     }
@@ -145,10 +160,6 @@ class FTPClient {
 
                 else if(sentence.startsWith("close")) {
                     System.exit(1);
-                }
-                else{
-                    System.out.println("Invalid command");
-                    System.out.println(options);
                 }
             }
         }
