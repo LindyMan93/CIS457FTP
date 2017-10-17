@@ -98,6 +98,7 @@ class ClientThread extends Thread
                         DataOutputStream  dataOutToClient = new DataOutputStream(dataSocket.getOutputStream());
                         File folder = new File(System.getProperty("user.dir"));
                         listOfFiles = folder.listFiles();
+                        if(!(listOfFiles.length==0)){
                         for (int i = 0; i < listOfFiles.length; i++)
                         {
                             String temp = listOfFiles[i]+"";
@@ -106,6 +107,11 @@ class ClientThread extends Thread
                                 dataOutToClient.writeUTF("file " + listOfFiles[i].getName());
                             }
                         }
+                      }
+                      else{
+                        dataOutToClient.writeUTF("No files have been stored");
+
+                      }
 
                         dataOutToClient.close();
                         dataSocket.close();
