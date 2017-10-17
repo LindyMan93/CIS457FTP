@@ -118,7 +118,8 @@ class ClientThread extends Thread {
         clientCommand = tokens.nextToken();
         try {
           nextFile = tokens.nextToken();
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
+          dataOutToClient.writeUTF("Error: No File Specified"); 
         }
 
         /*
@@ -138,6 +139,8 @@ class ClientThread extends Thread {
             String temp = listOfFiles[i] + "";
             if (listOfFiles[i].isFile() && temp.endsWith(".txt")) {
               dataOutToClient.writeUTF("file " + listOfFiles[i].getName());
+            } else if (listOfFiles.length == 0) {
+              dataOutToClient.writeUTF("No Files Found");
             }
           }
 

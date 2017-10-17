@@ -64,7 +64,6 @@ class FTPClient {
 
             String serverName = tokens.nextToken(); // pass the connect command
             serverName = tokens.nextToken();
-            System.out.println(serverName);
             port1 = Integer.parseInt(tokens.nextToken());
             System.out.println("Connecting to " + serverName + " through port " + port1);
             Socket ControlSocket = new Socket(serverName, port1);
@@ -89,6 +88,7 @@ class FTPClient {
                 }
 
                 catch (Exception e) {
+                    System.out.println("Invalid File");
                 }
 
                 /*
